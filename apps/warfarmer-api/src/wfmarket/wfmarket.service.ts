@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { WFMarketOrder } from './wfmarket.types';
 
 @Injectable()
 export class WfmarketService {
@@ -31,5 +32,32 @@ export class WfmarketService {
     const data = await response.json();
 
     return data;
+  }
+
+  async orders(
+    item: string,
+    includeItem: boolean = false,
+    platform: string = 'pc'
+  ): Promise<WFMarketOrder[]> {
+    const apiEndpoint = `${this.baseUrl}/items/${item}/orders`;
+    const urlWithItem = `${apiEndpoint}?include=item`;
+
+    const url = includeItem ? urlWithItem : apiEndpoint;
+    const response = await fetch(url, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `JWT ${this.token}`,
+        Platform: platform,
+      },
+    });
+
+    const data = await response.json();
+
+    if (!data.payload) {
+      return [];
+    }
+
+    return data.payload.orders;
   }
 }

@@ -1,4 +1,4 @@
-import { Controller, Get } from '@nestjs/common';
+import { Controller, Get, Param } from '@nestjs/common';
 import { ArcaneService } from './arcane.service';
 
 @Controller('arcane')
@@ -12,6 +12,11 @@ export class ArcaneController {
 
   @Get()
   async getFormattedArcaneList() {
-    return this.arcaneService.getFormattedArcaneList();
+    return this.arcaneService.getFormattedArcaneList(true);
+  }
+
+  @Get(':name/prices')
+  async getOrderPrices(@Param('name') name: string) {
+    return this.arcaneService.getOrderPrices(name);
   }
 }

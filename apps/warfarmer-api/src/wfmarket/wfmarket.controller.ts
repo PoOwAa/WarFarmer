@@ -14,4 +14,9 @@ export class WfmarketController {
   async item(@Param('item') item: string) {
     return await this.wfmarketService.item(item);
   }
+
+  @Get('items/:item/orders')
+  async orders(@Param('item') item: string) {
+    return await this.wfmarketService.orders(item);
+  }
 }

@@ -3,7 +3,9 @@ import Items, { Arcane } from 'warframe-items';
 import { ArcaneCollection, WFArcane } from './arcane.interface';
 import { WfmarketService } from '../wfmarket/wfmarket.service';
 import { arcaneCollection } from './arcaneCollection';
+import { WFMarketOrder } from '../wfmarket/wfmarket.types';
 
+const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 @Injectable()
 export class ArcaneService {
   private readonly arcaneCollection = arcaneCollection;
@@ -30,12 +32,12 @@ export class ArcaneService {
     });
   }
 
-  async getFormattedArcaneList(): Promise<WFArcane[]> {
+  async getFormattedArcaneList(withPrices: boolean): Promise<WFArcane[]> {
     const rawArcanes = this.getArcaneListRaw();
 
     const wfMarketItems = await this.wfMarketService.items();
 
-    return rawArcanes.map((arcane) => {
+    const res = rawArcanes.map((arcane) => {
       const wfMarketItem = wfMarketItems.find(
         (item) => item.item_name === arcane.name
       );
@@ -50,7 +52,98 @@ export class ArcaneService {
         urlName: wfMarketItem ? wfMarketItem.url_name : 'MISSING',
         collection: this.getArcaneCollection(arcane.name),
       };
-    });
+    }) as WFArcane[];
+
+    if (withPrices) {
+      for (const [i, arcane] of res.entries()) {
+        console.log(`Getting prices for ${arcane.name} [${i}/${res.length}]`);
+        arcane.sellPrice = await this.getOrderPrices(arcane.urlName);
+        await sleep(200);
+      }
+    }
+
+    return res;
+  }
+
+  async getOrderPrices(urlName: string) {
+    const orders = await this.wfMarketService.orders(urlName);
+
+    if (!orders) {
+      return {
+        sell10: 0,
+        sell25: 0,
+        sell50: 0,
+        sell100: 0,
+        sell250: 0,
+        sell500: 0,
+      };
+    }
+
+    const sellOrders = this.filterAndSortOrders(
+      orders.filter((order) => order.order_type === 'sell')
+    );
+
+    return {
+      sell10: this.calculatePrice(sellOrders, 10),
+      sell25: this.calculatePrice(sellOrders, 25),
+      sell50: this.calculatePrice(sellOrders, 50),
+      sell100: this.calculatePrice(sellOrders, 100),
+      sell250: this.calculatePrice(sellOrders, 250),
+      sell500: this.calculatePrice(sellOrders, 500),
+    };
+  }
+
+  private calculatePrice(orders: WFMarketOrder[], sampleSize: number) {
+    const prices = orders
+      .map((order) => {
+        return Array.from(
+          { length: order.realQuantity },
+          () => order.platinumPerPiece
+        );
+      })
+      .flat()
+      .slice(0, sampleSize);
+
+    return prices.reduce((a, b) => a + b, 0) / prices.length;
+  }
+
+  private filterAndSortOrders(orders: WFMarketOrder[]) {
+    return orders
+      .filter((order) => order.mod_rank !== 1)
+      .filter((order) => {
+        const lastSeen = new Date(order.user.last_seen);
+        const now = new Date();
+
+        return now.getTime() - lastSeen.getTime() < 1000 * 60 * 60 * 24 * 3;
+      })
+      .map((order) => ({
+        ...order,
+        realQuantity:
+          order.quantity * this.arcaneRankToQuantity(order.mod_rank),
+        platinumPerPiece:
+          order.platinum / this.arcaneRankToQuantity(order.mod_rank),
+      }))
+      .sort((a, b) => a.platinumPerPiece - b.platinumPerPiece)
+      .slice(0, 50);
+  }
+
+  private arcaneRankToQuantity(rank: number): number {
+    switch (rank) {
+      case 0:
+        return 1;
+      case 1:
+        return 3;
+      case 2:
+        return 6;
+      case 3:
+        return 10;
+      case 4:
+        return 15;
+      case 5:
+        return 21;
+      default:
+        return 0;
+    }
   }
 
   private getArcaneCollection(arcaneName: string): ArcaneCollection {

@@ -1,0 +1,34 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Arcane {
+  id           Int            @id @default(autoincrement())
+  name         String
+  imageName    String
+  levelStats   String
+  drops        String
+  rarity       String
+  tradeable    Boolean
+  urlName      String
+  collection   String?
+  vosfor       Float
+  ArcanePrices ArcanePrices[]
+}
+
+model ArcanePrices {
+  id            Int      @id @default(autoincrement())
+  arcane        Arcane   @relation(fields: [arcaneId], references: [id])
+  arcaneId      Int
+  sellPrice     String
+  vosforPerPlat String
+  date          DateTime @default(now())
+}

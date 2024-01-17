@@ -4,8 +4,8 @@ import { Cron } from '@nestjs/schedule';
 import { ArcaneService } from './arcane.service';
 import { WFMarketOrder } from '../wfmarket/wfmarket.types';
 import Items, { Arcane } from 'warframe-items';
-import { WFArcane } from './arcane.interface';
 import { DbService } from '../db/db.service';
+import { WFArcane } from '@warfarmer/types';
 
 const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
@@ -90,12 +90,12 @@ export class ArcaneUpdaterService {
       for (const arcane of res) {
         arcane.sellPrice = await this.getOrderPrices(arcane.urlName);
         arcane.vosforPerPlat = {
-          sell10: arcane.vosfor / arcane.sellPrice.sell10,
-          sell25: arcane.vosfor / arcane.sellPrice.sell25,
-          sell50: arcane.vosfor / arcane.sellPrice.sell50,
-          sell100: arcane.vosfor / arcane.sellPrice.sell100,
-          sell250: arcane.vosfor / arcane.sellPrice.sell250,
-          sell500: arcane.vosfor / arcane.sellPrice.sell500,
+          sell10: arcane.vosfor / arcane.sellPrice.sell10 || 0,
+          sell25: arcane.vosfor / arcane.sellPrice.sell25 || 0,
+          sell50: arcane.vosfor / arcane.sellPrice.sell50 || 0,
+          sell100: arcane.vosfor / arcane.sellPrice.sell100 || 0,
+          sell250: arcane.vosfor / arcane.sellPrice.sell250 || 0,
+          sell500: arcane.vosfor / arcane.sellPrice.sell500 || 0,
         };
         counter++;
         if (counter % 10 === 0) {
@@ -166,6 +166,10 @@ export class ArcaneUpdaterService {
       })
       .flat()
       .slice(0, sampleSize);
+
+    if (!prices.length) {
+      return 0;
+    }
 
     return prices.reduce((a, b) => a + b, 0) / prices.length;
   }

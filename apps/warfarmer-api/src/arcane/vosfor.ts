@@ -1,4 +1,4 @@
-import { ArcaneCollection } from './arcane.interface';
+import { ArcaneCollection } from '@warfarmer/types';
 
 export const ArcaneVosforValue: Record<
   ArcaneCollection,

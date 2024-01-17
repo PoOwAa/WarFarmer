@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { Rarity } from 'warframe-items';
-import { ArcaneCollection, WFArcane } from './arcane.interface';
 import { arcaneCollection } from './arcaneCollection';
 import { ArcaneVosforValue } from './vosfor';
 import { DbService } from '../db/db.service';
+import { ArcaneCollection, WFArcane } from '@warfarmer/types';
 
 @Injectable()
 export class ArcaneService {

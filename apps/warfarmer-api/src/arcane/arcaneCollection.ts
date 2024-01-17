@@ -1,4 +1,4 @@
-import { ArcaneCollection } from './arcane.interface';
+import { ArcaneCollection } from '@warfarmer/types';
 
 export const arcaneCollection: Record<ArcaneCollection, string[]> = {
   Duviri: [

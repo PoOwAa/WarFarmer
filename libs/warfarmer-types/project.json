@@ -1,0 +1,23 @@
+{
+  "name": "warfarmer-types",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/warfarmer-types/src",
+  "projectType": "library",
+  "targets": {
+    "build": {
+      "executor": "@nx/js:tsc",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "dist/libs/warfarmer-types",
+        "main": "libs/warfarmer-types/src/index.ts",
+        "tsConfig": "libs/warfarmer-types/tsconfig.lib.json",
+        "assets": ["libs/warfarmer-types/*.md"]
+      }
+    },
+    "lint": {
+      "executor": "@nx/eslint:lint",
+      "outputs": ["{options.outputFile}"]
+    }
+  },
+  "tags": []
+}

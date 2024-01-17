@@ -1,9 +1,10 @@
 import { Injectable } from '@nestjs/common';
-import Items, { Arcane } from 'warframe-items';
+import Items, { Arcane, Rarity } from 'warframe-items';
 import { ArcaneCollection, WFArcane } from './arcane.interface';
 import { WfmarketService } from '../wfmarket/wfmarket.service';
 import { arcaneCollection } from './arcaneCollection';
 import { WFMarketOrder } from '../wfmarket/wfmarket.types';
+import { ArcaneVosforValue } from './vosfor';
 
 const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 @Injectable()
@@ -42,6 +43,8 @@ export class ArcaneService {
         (item) => item.item_name === arcane.name
       );
 
+      const collection = this.getArcaneCollection(arcane.name);
+
       return {
         name: arcane.name,
         imageName: arcane.imageName,
@@ -50,14 +53,22 @@ export class ArcaneService {
         rarity: arcane.rarity,
         tradeable: arcane.tradable,
         urlName: wfMarketItem ? wfMarketItem.url_name : 'MISSING',
-        collection: this.getArcaneCollection(arcane.name),
+        collection,
+        vosfor: this.arcaneRarityToVosfor(collection, arcane.rarity),
       };
     }) as WFArcane[];
 
     if (withPrices) {
-      for (const [i, arcane] of res.entries()) {
-        console.log(`Getting prices for ${arcane.name} [${i}/${res.length}]`);
+      for (const arcane of res) {
         arcane.sellPrice = await this.getOrderPrices(arcane.urlName);
+        arcane.vosforPerPlat = {
+          sell10: arcane.vosfor / arcane.sellPrice.sell10,
+          sell25: arcane.vosfor / arcane.sellPrice.sell25,
+          sell50: arcane.vosfor / arcane.sellPrice.sell50,
+          sell100: arcane.vosfor / arcane.sellPrice.sell100,
+          sell250: arcane.vosfor / arcane.sellPrice.sell250,
+          sell500: arcane.vosfor / arcane.sellPrice.sell500,
+        };
         await sleep(200);
       }
     }
@@ -124,7 +135,17 @@ export class ArcaneService {
           order.platinum / this.arcaneRankToQuantity(order.mod_rank),
       }))
       .sort((a, b) => a.platinumPerPiece - b.platinumPerPiece)
-      .slice(0, 50);
+      .slice(0, 100);
+  }
+
+  private arcaneRarityToVosfor(
+    collection: ArcaneCollection,
+    rarity: Rarity
+  ): number {
+    if (!collection) {
+      return 0;
+    }
+    return ArcaneVosforValue[collection][rarity];
   }
 
   private arcaneRankToQuantity(rank: number): number {

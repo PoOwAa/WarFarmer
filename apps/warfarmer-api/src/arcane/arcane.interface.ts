@@ -26,4 +26,13 @@ export interface WFArcane {
     sell250: number;
     sell500: number;
   };
+  vosfor?: number;
+  vosforPerPlat?: {
+    sell10: number;
+    sell25: number;
+    sell50: number;
+    sell100: number;
+    sell250: number;
+    sell500: number;
+  };
 }

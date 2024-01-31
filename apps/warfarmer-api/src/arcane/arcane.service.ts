@@ -102,6 +102,23 @@ export class ArcaneService {
       return newArcane;
     }
 
+    await this.dbService.client.arcane.update({
+      data: {
+        name: arcane.name,
+        imageName: arcane.imageName,
+        drops: arcane.drops as unknown as JsonArray,
+        levelStats: arcane.levelStats as unknown as JsonArray,
+        rarity: arcane.rarity,
+        tradeable: arcane.tradeable,
+        urlName: arcane.urlName,
+        collection: arcane.collection,
+        vosfor: arcane.vosfor,
+      },
+      where: {
+        id: arcaneInDb.id,
+      },
+    });
+
     return arcaneInDb;
   }
 

@@ -6,6 +6,7 @@ RUN npm install
 COPY . .
 
 RUN npm i -g nx
+RUN nx run api-prisma-schema:generate-types
 RUN nx run warfarmer-api:build --prod
 
 FROM node:20-alpine as production

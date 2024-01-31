@@ -15,6 +15,7 @@
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
+      "@warfarmer/api-prisma-schema": ["libs/api-prisma-schema/src/index.ts"],
       "@warfarmer/types": ["libs/warfarmer-types/src/index.ts"]
     }
   },

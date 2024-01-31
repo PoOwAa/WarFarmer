@@ -32,7 +32,7 @@ jobs:
         run: npm ci
 
       - name: Build prisma dependency
-        run: npx nx run warfarmer-api:generate-types
+        run: npx nx run api-prisma-schema:generate-types
 
       - name: Lint
         run: npx nx run warfarmer-api:lint

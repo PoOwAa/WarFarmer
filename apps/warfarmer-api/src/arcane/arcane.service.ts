@@ -12,31 +12,23 @@ export class ArcaneService {
   constructor(private readonly dbService: DbService) {}
 
   async getArcane(name: string) {
-    const arcane = await this.dbService.arcane.findFirst({
+    const arcane = await this.dbService.client.arcane.findFirst({
       where: {
         name,
       },
     });
-
-    arcane.drops = JSON.parse(arcane.drops);
-    arcane.levelStats = JSON.parse(arcane.levelStats);
 
     return arcane;
   }
 
   async getArcaneList() {
-    const arcanes = await this.dbService.arcane.findMany();
-
-    for (const arcane of arcanes) {
-      arcane.drops = JSON.parse(arcane.drops);
-      arcane.levelStats = JSON.parse(arcane.levelStats);
-    }
+    const arcanes = await this.dbService.client.arcane.findMany();
 
     return arcanes;
   }
 
   async getArcaneWithLatestPrices(name: string) {
-    const arcane = await this.dbService.arcane.findFirst({
+    const arcane = await this.dbService.client.arcane.findFirst({
       where: {
         name,
       },
@@ -50,14 +42,11 @@ export class ArcaneService {
       },
     });
 
-    arcane.drops = JSON.parse(arcane.drops);
-    arcane.levelStats = JSON.parse(arcane.levelStats);
-
     return arcane;
   }
 
   async getArcanesWithLatestPrices() {
-    const arcanes = await this.dbService.arcane.findMany({
+    const arcanes = await this.dbService.client.arcane.findMany({
       include: {
         ArcanePrices: {
           orderBy: {
@@ -68,20 +57,11 @@ export class ArcaneService {
       },
     });
 
-    for (const arcane of arcanes) {
-      arcane.drops = JSON.parse(arcane.drops);
-      arcane.levelStats = JSON.parse(arcane.levelStats);
-      for (const prices of arcane.ArcanePrices) {
-        prices.sellPrice = JSON.parse(prices.sellPrice);
-        prices.vosforPerPlat = JSON.parse(prices.vosforPerPlat);
-      }
-    }
-
     return arcanes;
   }
 
   async getArcanePricesByDate(name: string, startDate: Date, endDate: Date) {
-    const arcanePrices = await this.dbService.arcanePrices.findMany({
+    const arcanePrices = await this.dbService.client.arcanePrices.findMany({
       where: {
         arcane: {
           name,
@@ -93,23 +73,18 @@ export class ArcaneService {
       },
     });
 
-    for (const prices of arcanePrices) {
-      prices.sellPrice = JSON.parse(prices.sellPrice);
-      prices.vosforPerPlat = JSON.parse(prices.vosforPerPlat);
-    }
-
     return arcanePrices;
   }
 
   async upsertArcane(arcane: WFArcane) {
-    const arcaneInDb = await this.dbService.arcane.findFirst({
+    const arcaneInDb = await this.dbService.client.arcane.findFirst({
       where: {
         name: arcane.name,
       },
     });
 
     if (!arcaneInDb) {
-      const newArcane = await this.dbService.arcane.create({
+      const newArcane = await this.dbService.client.arcane.create({
         data: {
           name: arcane.name,
           imageName: arcane.imageName,

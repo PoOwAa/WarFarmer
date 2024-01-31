@@ -1,5 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { WfmarketController } from './wfmarket.controller';
+import { WfmarketService } from './wfmarket.service';
 
 describe('WfmarketController', () => {
   let controller: WfmarketController;
@@ -7,6 +8,12 @@ describe('WfmarketController', () => {
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       controllers: [WfmarketController],
+      providers: [
+        {
+          provide: WfmarketService,
+          useValue: {},
+        },
+      ],
     }).compile();
 
     controller = module.get<WfmarketController>(WfmarketController);

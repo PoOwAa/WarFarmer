@@ -1,0 +1,65 @@
+version: '3.8'
+
+services:
+  warfarmer-db:
+    image: 'postgres'
+    networks:
+      - public
+    volumes:
+      - 'db:/var/lib/postgresql/data'
+    environment:
+      POSTGRES_USER: andyrum
+      POSTGRES_PASSWORD_FILE: /run/secrets/WARFARMER_DB_PASSWORD
+      POSTGRES_DB: warfarmer
+    secrets:
+      - WARFARMER_DB_PASSWORD
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 3
+        window: 120s
+      labels:
+        - 'traefik.enable=true'
+        - 'traefik.tcp.routers.warfarmer-db.rule=HostSNI(`db.warfarmer.andyrum.com`)'
+        - 'traefik.tcp.routers.warfarmer-db.entrypoints=postgres'
+        - 'traefik.tcp.services.warfarmer-db.loadbalancer.server.port=5432'
+        - 'traefik.tcp.routers.warfarmer-db.tls=true'
+        - 'traefik.tcp.routers.warfarmer-db.tls.certresolver=leresolver'
+
+  warfarmer-api:
+    image: 'poowaa/warfarmer-api:latest'
+    networks:
+      - public
+    secrets:
+      - WF_DB_URL
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 3
+        window: 120s
+      labels:
+        - 'traefik.enable=true'
+        - 'traefik.http.routers.warfarmer-api.rule=Host(`api.warfarmer.andyrum.com`)'
+        - 'traefik.http.routers.warfarmer-api.entrypoints=websecure'
+        - 'traefik.http.services.warfarmer-api.loadbalancer.server.port=3000'
+        - 'traefik.http.routers.warfarmer-api.service=warfarmer-api'
+        - 'traefik.http.routers.warfarmer-api.tls.certresolver=leresolver'
+
+networks:
+  public:
+    external: true
+  agent_network:
+    external: true
+
+secrets:
+  WARFARMER_DB_PASSWORD:
+    external: true
+  WF_DB_URL:
+    external: true
+
+volumes:
+  db:

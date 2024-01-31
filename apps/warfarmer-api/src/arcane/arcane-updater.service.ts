@@ -32,11 +32,11 @@ export class ArcaneUpdaterService {
       const arcaneInDb = await this.arcaneService.upsertArcane(arcane);
 
       // add prices
-      await this.dbService.arcanePrices.create({
+      await this.dbService.client.arcanePrices.create({
         data: {
           arcaneId: arcaneInDb.id,
-          sellPrice: JSON.stringify(arcane.sellPrice),
-          vosforPerPlat: JSON.stringify(arcane.vosforPerPlat),
+          sellPrice: arcane.sellPrice,
+          vosforPerPlat: arcane.vosforPerPlat,
         },
       });
     }

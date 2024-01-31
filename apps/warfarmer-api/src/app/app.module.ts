@@ -6,9 +6,20 @@ import { WfmarketModule } from '../wfmarket/wfmarket.module';
 import { ArcaneModule } from '../arcane/arcane.module';
 import { ScheduleModule } from '@nestjs/schedule';
 import { DbModule } from '../db/db.module';
+import { ConfigModule } from '@nestjs/config';
+import configuration from '../config/database';
 
 @Module({
-  imports: [ScheduleModule.forRoot(), DbModule, WfmarketModule, ArcaneModule],
+  imports: [
+    ConfigModule.forRoot({
+      isGlobal: true,
+      load: [configuration],
+    }),
+    ScheduleModule.forRoot(),
+    DbModule,
+    WfmarketModule,
+    ArcaneModule,
+  ],
   controllers: [AppController],
   providers: [AppService],
 })

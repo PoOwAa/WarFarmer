@@ -4,6 +4,7 @@ import { arcaneCollection } from './arcaneCollection';
 import { ArcaneVosforValue } from './vosfor';
 import { DbService } from '../db/db.service';
 import { ArcaneCollection, WFArcane } from '@warfarmer/types';
+import { JsonArray } from '@prisma/client/runtime/library';
 
 @Injectable()
 export class ArcaneService {
@@ -88,8 +89,8 @@ export class ArcaneService {
         data: {
           name: arcane.name,
           imageName: arcane.imageName,
-          drops: JSON.stringify(arcane.drops),
-          levelStats: JSON.stringify(arcane.levelStats),
+          drops: arcane.drops as unknown as JsonArray,
+          levelStats: arcane.levelStats as unknown as JsonArray,
           rarity: arcane.rarity,
           tradeable: arcane.tradeable,
           urlName: arcane.urlName,

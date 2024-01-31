@@ -62,7 +62,7 @@ jobs:
             poowaa/warfarmer-api:${{ github.sha }}
 
       - name: Run Prisma migrations
-        run: npx prisma migrate deploy
+        run: npx nx run api-prisma-schema:deploy
         env:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
 

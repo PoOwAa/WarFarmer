@@ -32,6 +32,12 @@
       "options": {
         "cwd": "libs/api-prisma-schema"
       }
+    },
+    "deploy": {
+      "command": "prisma migrate deploy",
+      "options": {
+        "cwd": "libs/api-prisma-schema"
+      }
     }
   },
   "tags": []

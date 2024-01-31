@@ -19,7 +19,7 @@ WORKDIR /app
 COPY package.json package-lock.json ./
 RUN npm install --only=production
 
-COPY --from=builder /app/node_modules/@prisma/client/warfarmer  ./node_modules/@prisma/client/warfarmer
+COPY --from=builder /app/node_modules/.prisma  ./node_modules/.prisma
 COPY --from=builder /app/dist/apps/warfarmer-api ./dist
 
 CMD ["node", "dist/main"]

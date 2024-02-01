@@ -31,7 +31,7 @@ export class ArcaneService {
   async getArcaneWithLatestPrices(name: string) {
     const arcane = await this.dbService.client.arcane.findFirst({
       where: {
-        name,
+        urlName: name,
       },
       include: {
         ArcanePrices: {
@@ -65,7 +65,7 @@ export class ArcaneService {
     const arcanePrices = await this.dbService.client.arcanePrices.findMany({
       where: {
         arcane: {
-          name,
+          urlName: name,
         },
         date: {
           gte: startDate,

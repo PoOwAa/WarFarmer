@@ -31,12 +31,12 @@ const StyledCellText = styled.p`
   white-space: nowrap;
 `;
 
-const baseUrl = 'http://localhost:3000';
-// const baseUrl = 'https://bbc7-188-142-193-235.ngrok-free.app';
+// const apiUrl = 'http://localhost:3000';
+const apiUrl = 'https://api.warfarmer.andyrum.com';
 
 export function ArcaneTable(props: ArcaneTableProps) {
   useEffect(() => {
-    fetch(`${baseUrl}/api/arcane/prices`)
+    fetch(`${apiUrl}/api/arcane/prices`)
       .then((res) => res.json())
       .then(rowData => setRowData(rowData.map((row: WFArcaneWithPrices) => ({
         name: row.name,

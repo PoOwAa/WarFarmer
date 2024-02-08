@@ -28,11 +28,10 @@ export const ArcaneVosforValue: Record<
     Rare: 24,
     Legendary: 0,
   },
-  // TODO: need to know prices
   Ostron: {
-    Common: 0,
-    Uncommon: 0,
-    Rare: 0,
+    Common: 12,
+    Uncommon: 18,
+    Rare: 24,
     Legendary: 0,
   },
   Solaris: {

@@ -35,8 +35,8 @@ export const ArcaneVosforValue: Record<
     Legendary: 0,
   },
   Solaris: {
-    Common: 0,
-    Uncommon: 0,
+    Common: 12,
+    Uncommon: 18,
     Rare: 24,
     Legendary: 0,
   },

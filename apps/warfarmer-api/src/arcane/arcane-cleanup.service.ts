@@ -16,20 +16,26 @@ export class ArcaneCleanupService {
     this.logger.debug('Aggregating old arcane prices...');
     const startDate = new Date('2024-01-01');
 
-    // 2 months ago, but last day of the month, set the hour to 23:59:59
+    // endDate should be the last date of the last week
     const endDate = new Date();
-    endDate.setMonth(endDate.getMonth() - 2);
-    endDate.setDate(0);
-    endDate.setHours(23, 59, 59, 999);
+    endDate.setDate(endDate.getDate() - endDate.getDay());
 
     const arcaneProto = await this.dbService.client.arcane.findMany();
 
     // Aggregate prices for each arcane
     for (const arcane of arcaneProto) {
-      this.logger.debug(
-        `########## Aggregating prices for arcane ${arcane.id} - ${arcane.name} ##########`
-      );
-      await this.aggregatePrices(arcane.id, startDate, endDate);
+      try {
+        this.logger.debug(
+          `########## Aggregating prices for arcane ${arcane.id} - ${arcane.name} ##########`
+        );
+        await this.aggregatePrices(arcane.id, startDate, endDate);
+      } catch (e) {
+        this.logger.error(
+          `Error aggregating prices for arcane ${arcane.id} - ${arcane.name}`,
+          e
+        );
+        continue;
+      }
     }
 
     this.logger.debug('Aggregating old arcane prices DONE');
@@ -45,75 +51,49 @@ export class ArcaneCleanupService {
         startDate.toISOString().split('T')[0]
       } to ${endDate.toISOString().split('T')[0]}`
     );
-    // sd is the first day of the startDate
-    const sd = new Date(startDate);
-    sd.setDate(1);
 
-    // ed is the last day of the startDate month
-    const ed = new Date(startDate);
-    ed.setMonth(ed.getMonth() + 1);
-    ed.setDate(1);
+    const arcanes = await this.dbService.client.arcanePrices.findMany({
+      where: {
+        arcaneId,
+      },
+    });
 
-    while (sd < endDate) {
-      try {
-        this.logger.debug(
-          `Arcane [${arcaneId}] from ${sd.toISOString().split('T')[0]} to ${
-            ed.toISOString().split('T')[0]
-          }`
-        );
-        const arcanes = await this.dbService.client.arcanePrices.findMany({
-          where: {
-            arcaneId,
-            date: {
-              gte: sd,
-              lt: ed,
-            },
-          },
-        });
-
-        if (arcanes.length === 0) {
-          // Increase the month by 1
-          sd.setMonth(sd.getMonth() + 1);
-          ed.setMonth(ed.getMonth() + 1);
-          continue;
-        }
-
-        const { idsToDelete, pricesToInsert } = this.processArcanes(
-          arcaneId,
-          arcanes
-        );
-
-        await this.dbService.client.arcanePrices.deleteMany({
-          where: {
-            id: {
-              in: idsToDelete,
-            },
-          },
-        });
-
-        // Insert the aggregated price
-        await this.dbService.client.arcanePrices.createMany({
-          data: pricesToInsert,
-        });
-
-        // Increase the month by 1
-        sd.setMonth(sd.getMonth() + 1);
-        ed.setMonth(ed.getMonth() + 1);
-        // ####
-      } catch (e) {
-        // Increase the month by 1
-        sd.setMonth(sd.getMonth() + 1);
-        ed.setMonth(ed.getMonth() + 1);
-        continue;
-      }
+    if (arcanes.length === 0) {
+      return;
     }
+
+    const { idsToDelete, pricesToInsert } = this.processArcanes(
+      arcaneId,
+      arcanes,
+      endDate
+    );
+
+    await this.dbService.client.arcanePrices.deleteMany({
+      where: {
+        id: {
+          in: idsToDelete,
+        },
+      },
+    });
+
+    // Insert the aggregated price
+    await this.dbService.client.arcanePrices.createMany({
+      data: pricesToInsert,
+    });
   }
 
-  private processArcanes(arcaneId: number, prices: ArcanePrices[]) {
+  private processArcanes(
+    arcaneId: number,
+    prices: ArcanePrices[],
+    endDate: Date
+  ) {
     // Chunk arcane prices by day
     const pricesByDay = {};
 
     for (const arcane of prices) {
+      if (arcane.date > endDate) {
+        continue;
+      }
       const date = arcane.date.toISOString().split('T')[0];
 
       if (!pricesByDay[date]) {

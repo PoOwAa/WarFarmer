@@ -126,3 +126,4 @@ jobs:
           url: ${{ secrets.PORTAINER_WEBHOOK_URL }}
           method: 'POST'
           customHeaders: '{"Content-Type": "application/json"}'
+          timeout: 20000

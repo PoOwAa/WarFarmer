@@ -1,6 +1,7 @@
 FROM node:20-alpine as builder
 
 WORKDIR /app
+RUN apk add --no-cache openssl
 COPY package.json package-lock.json ./
 RUN npm install
 COPY . .
@@ -15,7 +16,7 @@ ARG NODE_ENV=production
 ENV NODE_ENV=${NODE_ENV}
 
 WORKDIR /app
-
+RUN apk add --no-cache openssl
 COPY package.json package-lock.json ./
 RUN npm install --only=production
 

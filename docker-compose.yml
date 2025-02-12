@@ -2,7 +2,7 @@ version: '3.8'
 
 services:
   warfarmer-db:
-    image: 'postgres'
+    image: postgres:16
     networks:
       - public
     volumes:

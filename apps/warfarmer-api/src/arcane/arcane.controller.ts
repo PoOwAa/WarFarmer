@@ -1,9 +1,13 @@
-import { Controller, Get, Param } from '@nestjs/common';
+import { Controller, Get, Param, Post } from '@nestjs/common';
 import { ArcaneService } from './arcane.service';
+import { ArcaneCleanupService } from './arcane-cleanup.service';
 
 @Controller('arcane')
 export class ArcaneController {
-  constructor(private readonly arcaneService: ArcaneService) {}
+  constructor(
+    private readonly arcaneService: ArcaneService,
+    private readonly arcaneCleanup: ArcaneCleanupService
+  ) {}
 
   @Get()
   async getFormattedArcaneList() {
@@ -32,5 +36,13 @@ export class ArcaneController {
     @Param('endDate') endDate: Date
   ) {
     return this.arcaneService.getArcanePricesByDate(name, startDate, endDate);
+  }
+
+  @Post('aggregate')
+  async aggregateOldPrices() {
+    this.arcaneCleanup.aggregateOldArcanePrices();
+    return {
+      message: 'Aggregating old arcane prices...',
+    };
   }
 }

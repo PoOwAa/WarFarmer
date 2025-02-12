@@ -61,6 +61,21 @@ export class ArcaneService {
     return arcanes;
   }
 
+  async getArcanesWithOldestPrices() {
+    const arcanes = await this.dbService.client.arcane.findMany({
+      include: {
+        ArcanePrices: {
+          orderBy: {
+            date: 'asc',
+          },
+          take: 1,
+        },
+      },
+    });
+
+    return arcanes;
+  }
+
   async getArcanePricesByDate(name: string, startDate: Date, endDate: Date) {
     const arcanePrices = await this.dbService.client.arcanePrices.findMany({
       where: {

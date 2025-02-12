@@ -1,6 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { WfmarketService } from '../wfmarket/wfmarket.service';
-import { Cron } from '@nestjs/schedule';
+// import { Cron } from '@nestjs/schedule';
 import { ArcaneService } from './arcane.service';
 import { WFMarketOrder } from '../wfmarket/wfmarket.types';
 import Items, { Arcane } from 'warframe-items';
@@ -20,7 +20,7 @@ export class ArcaneUpdaterService {
     private readonly dbService: DbService
   ) {}
 
-  @Cron('0 0 * * * *')
+  // @Cron('0 0 * * * *')
   async handleCron() {
     this.logger.debug('Updating arcanes...');
     const arcanes = await this.getFormattedArcaneList(true);

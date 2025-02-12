@@ -2,6 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { ArcaneService } from './arcane.service';
 import { DbService } from '../db/db.service';
 import { ArcanePrices } from '@prisma/client';
+import { Cron } from '@nestjs/schedule';
 
 @Injectable()
 export class ArcaneCleanupService {
@@ -12,9 +13,9 @@ export class ArcaneCleanupService {
     private readonly dbService: DbService
   ) {}
 
+  @Cron('30 12 * * *')
   async aggregateOldArcanePrices() {
     this.logger.debug('Aggregating old arcane prices...');
-    const startDate = new Date('2024-01-01');
 
     // endDate should be the last date of the last week
     const endDate = new Date();
@@ -28,7 +29,7 @@ export class ArcaneCleanupService {
         this.logger.debug(
           `########## Aggregating prices for arcane ${arcane.id} - ${arcane.name} ##########`
         );
-        await this.aggregatePrices(arcane.id, startDate, endDate);
+        await this.aggregatePrices(arcane.id, endDate);
       } catch (e) {
         this.logger.error(
           `Error aggregating prices for arcane ${arcane.id} - ${arcane.name}`,
@@ -41,17 +42,7 @@ export class ArcaneCleanupService {
     this.logger.debug('Aggregating old arcane prices DONE');
   }
 
-  private async aggregatePrices(
-    arcaneId: number,
-    startDate: Date,
-    endDate: Date
-  ) {
-    this.logger.debug(
-      `Aggregating prices for arcane ${arcaneId} from ${
-        startDate.toISOString().split('T')[0]
-      } to ${endDate.toISOString().split('T')[0]}`
-    );
-
+  private async aggregatePrices(arcaneId: number, endDate: Date) {
     const arcanes = await this.dbService.client.arcanePrices.findMany({
       where: {
         arcaneId,

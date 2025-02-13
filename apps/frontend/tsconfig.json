@@ -5,7 +5,9 @@
     "esModuleInterop": false,
     "allowSyntheticDefaultImports": true,
     "strict": true,
-    "types": ["vite/client", "vitest"]
+    "types": ["vite/client", "vitest"],
+    "module": "NodeNext",
+    "moduleResolution": "nodenext"
   },
   "files": [],
   "include": [],

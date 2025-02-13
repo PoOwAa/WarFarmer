@@ -129,75 +129,85 @@ export function ArcaneTable(props: ArcaneTableProps) {
   const colDefs: Array<ColDef | ColGroupDef> = [
     { field: 'name', filter: true, cellRenderer: ArcaneNameRenderer, getQuickFilterText: ({ value }: { value: string }) => value },
     { field: 'collection', filter: collectionFilter, hide: true },
-    { field: 'vosfor', cellRenderer: VosforRenderer },
+    { field: 'vosfor', cellRenderer: VosforRenderer, maxWidth: 100 },
     { headerName: 'Platinum', children: [
       {
         field: 'platinum10',
         headerName: '10',
-        cellRenderer: PlatRenderer
+        cellRenderer: PlatRenderer,
+
       },
       {
         field: 'platinum25',
         headerName: '25',
         cellRenderer: PlatRenderer,
         hide: true,
+
       },
       {
         field: 'platinum50',
         headerName: '50',
         cellRenderer: PlatRenderer,
         hide: true,
+
       },
       {
         field: 'platinum100',
         headerName: '100',
-        cellRenderer: PlatRenderer
+        cellRenderer: PlatRenderer,
+
       },
       {
         field: 'platinum250',
         headerName: '250',
-        cellRenderer: PlatRenderer
+        cellRenderer: PlatRenderer,
+
       },
       {
         field: 'platinum500',
         headerName: '500',
         cellRenderer: PlatRenderer,
-        hide: true,
+
       },
     ], },
     { field: 'vosforPerPlat', children: [
       {
         field: 'vosforPerPlat10',
         headerName: '10',
-        cellRenderer: VosforPerPlatRenderer
+        cellRenderer: VosforPerPlatRenderer,
+
       },
       {
         field: 'vosforPerPlat25',
         headerName: '25',
         cellRenderer: VosforPerPlatRenderer,
         hide: true,
+
       },
       {
         field: 'vosforPerPlat50',
         headerName: '50',
         cellRenderer: VosforPerPlatRenderer,
         hide: true,
+
       },
       {
         field: 'vosforPerPlat100',
         headerName: '100',
-        cellRenderer: VosforPerPlatRenderer
+        cellRenderer: VosforPerPlatRenderer,
+
       },
       {
         field: 'vosforPerPlat250',
         headerName: '250',
-        cellRenderer: VosforPerPlatRenderer
+        cellRenderer: VosforPerPlatRenderer,
+
       },
       {
         field: 'vosforPerPlat500',
         headerName: '500',
         cellRenderer: VosforPerPlatRenderer,
-        hide: true,
+
       },
     ] },
     { field: 'rarity', hide: true },
@@ -206,13 +216,15 @@ export function ArcaneTable(props: ArcaneTableProps) {
   ];
 
   return (
-    <div className="ag-theme-quartz-dark" style={{ height: 500 }}>
+    <div className="ag-theme-quartz-dark" style={{ height: '100%', width: '100%' }}>
       <AgGridReact<WFArcaneWithPrices>
         rowData={rowData}
         columnDefs={colDefs}
         quickFilterText={props.filter}
         isExternalFilterPresent={isExternalFilterPresent}
         doesExternalFilterPass={doesExternalFilterPass}
+        domLayout="autoHeight"
+        autoSizeStrategy={ {type: 'fitGridWidth', defaultMinWidth: 100, defaultMaxWidth: 200} }
       />
     </div>
   );

@@ -46,4 +46,16 @@ export const ArcaneVosforValue: Record<
     Rare: 20,
     Legendary: 0,
   },
+  Cavia: {
+    Common: 0,
+    Uncommon: 18,
+    Rare: 24,
+    Legendary: 84,
+  },
+  Hex: {
+    Common: 0,
+    Uncommon: 24, // FIXME: warframe-items thinks Hex arcanes are uncommon, but wiki says they are rare and can be dissolved for 24 vosfors
+    Rare: 24,
+    Legendary: 0,
+  },
 };

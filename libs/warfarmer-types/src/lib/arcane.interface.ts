@@ -7,7 +7,9 @@ export type ArcaneCollection =
   | 'Necralisk'
   | 'Ostron'
   | 'Solaris'
-  | 'Steel';
+  | 'Steel'
+  | 'Cavia'
+  | 'Hex';
 
 export interface ArcanePrices {
   id: number;

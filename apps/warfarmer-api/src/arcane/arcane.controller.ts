@@ -1,5 +1,6 @@
 import { Controller, Get, Param } from '@nestjs/common';
 import { ArcaneService } from './arcane.service';
+import Items, { Arcane } from 'warframe-items';
 
 @Controller('arcane')
 export class ArcaneController {
@@ -13,6 +14,23 @@ export class ArcaneController {
   @Get('prices')
   async getFormattedArcaneListWithPrices() {
     return this.arcaneService.getArcanesWithLatestPrices();
+  }
+
+  @Get('raw-list')
+  async getArcaneList() {
+    const items = new Items({ category: ['Arcanes'] });
+
+    const arcanes = items
+      .filter((arcane) => arcane.name !== 'Arcane')
+      .filter((arcane) => arcane.category === 'Arcanes') as Arcane[];
+
+    return arcanes.map((arcane) => {
+      if (!arcane.rarity) {
+        arcane.rarity = 'Common';
+      }
+
+      return arcane;
+    });
   }
 
   @Get(':name/prices')

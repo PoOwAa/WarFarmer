@@ -58,4 +58,10 @@ export const ArcaneVosforValue: Record<
     Rare: 24,
     Legendary: 0,
   },
+  Ascension: {
+    Common: 0,
+    Uncommon: 24, // FIXME: warframe-items thinks Ascension arcanes are uncommon, but wiki says they are rare and can be dissolved for 24 vosfors
+    Rare: 24,
+    Legendary: 0,
+  },
 };

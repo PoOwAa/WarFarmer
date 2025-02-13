@@ -53,6 +53,10 @@ export function Arcane(props: ArcaneProps) {
           Cavia
         </label>
         <label>
+          <input type="radio" name="collectionFilter" id="ascension" onChange={() => setCollection('Ascension')} checked={collection === 'Ascension'}/>
+          Ascension
+        </label>
+        <label>
           <input type="radio" name="collectionFilter" id="hex" onChange={() => setCollection('Hex')} checked={collection === 'Hex'}/>
           Hex
         </label>

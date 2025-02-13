@@ -9,7 +9,8 @@ export type ArcaneCollection =
   | 'Solaris'
   | 'Steel'
   | 'Cavia'
-  | 'Hex';
+  | 'Hex'
+  | 'Ascension';
 
 export interface ArcanePrices {
   id: number;

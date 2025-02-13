@@ -157,4 +157,11 @@ export const arcaneCollection: Record<ArcaneCollection, string[]> = {
     'Secondary Enervate',
     'Melee Doughty',
   ],
+  Ascension: [
+    'Arcane Ice Storm',
+    'Arcane Battery',
+    'Secondary Surge',
+    'Secondary Fortifier',
+    'Melee Afflictions',
+  ],
 };

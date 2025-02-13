@@ -48,6 +48,14 @@ export function Arcane(props: ArcaneProps) {
           <input type="radio" name="collectionFilter" id="steel" onChange={() => setCollection('Steel')} checked={collection === 'Steel'}/>
           Steel
         </label>
+        <label>
+          <input type="radio" name="collectionFilter" id="cavia" onChange={() => setCollection('Cavia')} checked={collection === 'Cavia'}/>
+          Cavia
+        </label>
+        <label>
+          <input type="radio" name="collectionFilter" id="hex" onChange={() => setCollection('Hex')} checked={collection === 'Hex'}/>
+          Hex
+        </label>
       </div>
       <ArcaneTable filter={filter} collection={collection}/>
     </>
